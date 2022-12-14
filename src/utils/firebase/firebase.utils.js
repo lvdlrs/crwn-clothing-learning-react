@@ -9,11 +9,16 @@ import {
     signOut,
     onAuthStateChanged
 } from 'firebase/auth';
+
 import {
   getFirestore,
   doc,
   getDoc,
-  setDoc
+  setDoc,
+  collection,
+  writeBatch,
+  query,
+  getDocs
 } from 'firebase/firestore'
 
 const firebaseConfig = {
@@ -40,6 +45,41 @@ export const signInWithGooglePopup = () => signInWithPopup(auth, googleProvider)
 
 // db initialization 
 export const db = getFirestore();
+
+// WRITING SHOP DATA INTO THE FIRESTORE
+// import collection and writeBatch in firebase/firestore
+
+export const addCollectionAndDocuments = async ( collectionKey, objetsToAdd ) =>{
+  const collectionRef = collection(db, collectionKey);
+  // batch adding objets to the collection
+  const batch = writeBatch(db);
+
+  objetsToAdd.forEach((object) => {
+    const docRef = doc(collectionRef, object.title.toLowerCase());
+    batch.set(docRef, object);
+  });
+
+  await batch.commit();
+  console.log('done');
+}
+
+// getting the shop data in firebase
+// import the query and getdocs in firebase/firestore
+export const getCategoriesAndDocuments = async () => {
+  const collectionRef = collection(db, 'categories');
+  const q = query(collectionRef);
+
+  const querySnapshot = await getDocs(q);
+
+  const categoryMap = querySnapshot.docs.reduce((accumulator, docSnapshot ) => {
+    const { title, items } = docSnapshot.data();
+    accumulator[title.toLowerCase()] = items;
+    return accumulator;
+  }, {});
+
+  return categoryMap;
+}
+
 
 export const createUserDocumentFromAuth = async ( 
   userAuth, 
