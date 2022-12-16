@@ -2,7 +2,7 @@
 import SignUpForm from "../../components/sign-up-form/sign-up-form.component";
 import SignInForm from "../../components/sign-in-form/sign-in-form.component";
 
-import './authentication.styles.scss';
+import {AuthContainer} from './authentication.styles.jsx';
 
 const Authentication = () => {
 
@@ -20,15 +20,15 @@ const Authentication = () => {
     //     .catch(err=>{
     //         console.log('error in redirect sign in: ', err.message);
     //     })
-        
+
     // },[]);
-  
+
 
     return(
-        <div className="authentication-container">           
+        <AuthContainer>
             <SignInForm />
             <SignUpForm />
-        </div>
+        </AuthContainer>
     )
 }
 
